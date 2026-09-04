@@ -15,17 +15,9 @@
 %%%%%%%%%%%%%% TEMPLATE SETTINGS %%%%%%%%%%%%%%
 \mode<presentation>
 {
-%% OPTIONS -- see README for the full, current list
-% nav - Enables a bottom right navigation bar
-% noslidenumbers - Removes counting of slides in bottom right
-% fullFooter - Enables a more descriptive footer
-% sectionbar=, titlebar=, titlecolor=, background=, textcolor=,
-% cornerlogo=, monogram=, titlepagelogo=, mark=, highlight= -- see README
-% NOT combined with [fullFooter] or [nav] here: FOUND BY TESTING
-% 2026-09 -- \ndcornerlogo/\ndlogonote assume nothing else occupies the
-% bottom strip of the slide, and both fullFooter's 3-part bar and nav's
-% icon row visibly collide with them. Not something this theme
-% resolves automatically; see the README's note on this.
+%% OPTIONS -- see README for the full, current list. Not combined with
+%% [fullFooter] or [nav] here: both collide visually with [cornerlogo]
+%% (see README).
 \usetheme[sectionbar=gold,cornerlogo=blue]{NotreDame}
 \setbeamercovered{transparent}
 }
@@ -39,13 +31,6 @@
 \usepackage[scaled=.90]{helvet}
 \usepackage{courier}
 \usepackage[T1]{fontenc}
-% pstricks (plus pst-node/pst-text/pst-3d) dropped 2026-09: it needs the
-% classic latex+dvips+ps2pdf pipeline to actually draw anything --
-% under plain pdflatex (what this fork and every deck built from it
-% actually use) its real graphics commands fail with "PSTricks_Not_
-% Configured_For_This_Format." The only thing this file used it for was
-% \blue/\red/\black/\green as declarative color switches, which are
-% defined directly below instead, with no pstricks dependency.
 \usepackage{color,colortbl}
 
 \usepackage{geometry}
@@ -76,17 +61,6 @@ backend=biber]{biblatex}
 \title{My Title}
 %\subtitle{}
 
-% FOUND BY TESTING 2026-09: the placeholder \date long form used to add
-% a second line ("\\ Occasion") purely for its own sake, and \institute
-% declared a second, entirely unused affiliation (\inst{2} -- \author
-% only ever references \inst{1}) -- upstream boilerplate that padded
-% the title page's vertical content well past what a real deck would
-% use. Harmless at the old, smaller \titlegraphic size, but the larger,
-% bottom-left title-page logo Alex asked for ("I want it larger in the
-% lower-left corner") now reaches high enough to collide with that
-% extra height. Trimmed to a single real affiliation and a one-line
-% date -- both actually representative of a normal deck, and the
-% collision is gone as a direct result (confirmed by rendering).
 \date{\today}
 % - Use the \inst{?} command only if the authors have different
 %   affiliation.
@@ -110,18 +84,8 @@ University of Notre Dame du Lac}
 % \pgfdeclareimage[height=0.5cm]{university-logo}{university-logo-filename}
 % \logo{\pgfuseimage{university-logo}}
 
-% define some basic colours. FOUND BY TESTING 2026-09: this file used
-% to \newcommand these while pstricks (loaded above, since removed) was
-% also loaded and already defined them, giving a hard "Command \blue
-% already defined" error. Now that pstricks is gone, plain \newcommand
-% is correct again -- and, since document.tex's own prose uses both
-% {\red Define} (no braced argument right after) and \bs{\blue{alt}}
-% (an immediately-following braced group), these stay deliberately
-% declarative (no argument) rather than argument-taking: {\blue{alt}}
-% is just \blue switching color, then a separate group {alt} inheriting
-% it -- an argument-taking \blue{#1} would have broken the first style
-% instead (silently swallowing the next single token as its argument,
-% e.g. {\red Define} -> "D", leaving "efine" uncolored).
+% Basic declarative color switches (not argument-taking, so both
+% {\red Define} and \bs{\blue{alt}} work).
 \setbeamercolor{blue}{fg=blue!90}
 \newcommand{\blue}{\usebeamercolor[fg]{blue}}
 \setbeamercolor{red}{fg=red!80,bg=yellow}
@@ -132,9 +96,7 @@ University of Notre Dame du Lac}
 \newcommand{\green}{\usebeamercolor[fg]{green}}
 
 % \bs -- a literal backslash, for showing command names as text (e.g.
-% \bs documentclass prints "\documentclass"). Used throughout
-% document.tex but was never actually defined anywhere in this
-% template -- FOUND BY TESTING 2026-09, another pre-existing gap.
+% \bs documentclass prints "\documentclass").
 \newcommand{\bs}{\textbackslash}
 
 % Delete this, if you do not want the table of contents to pop up at
@@ -152,14 +114,8 @@ University of Notre Dame du Lac}
 %\beamerdefaultoverlayspecification{<+->}
 
 \begin{document}
-%% Title Slide
-% \setbeamertemplate{background} is set HERE, outside \begin{frame},
-% not inside it -- Beamer locks in a frame's background at
-% \begin{frame} time, before the frame's own content runs, so setting
-% it from inside \titlepage itself is too late (see
-% \ndtitlepagelogodraw's comment in beamerthemeNotreDame.sty). Every
-% deck built on this theme needs this same wrapping for its title
-% frame.
+%% Title Slide -- \setbeamertemplate{background} must be set here,
+%% outside \begin{frame} (see README).
 {
 \setbeamertemplate{navigation symbols}{}
 \setbeamertemplate{background}{\ndtitlepagelogodraw}

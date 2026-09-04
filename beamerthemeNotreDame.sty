@@ -1,40 +1,9 @@
 \ProvidesPackage{beamerthemeNotreDame}
 
-% Adapted from the University of Oregon theme (http://ix.cs.uoregon.edu/~peter/uotheme/)
-% and also from some mangled pieces of the default theme.  That probably puts this under
-% GPLv2.
-%
-% Forked and modernized by the Dowling Lab, September 2026. See README
-% for the full current option list. Highlights, in order:
-%  - Replaced the hardcoded College-of-Science logo/titlegraphic with real,
-%    current official Notre Dame marks (no college sub-branding).
-%  - Fixed [sections] (now [sectionbar]) to actually display the current
-%    section name -- it previously added a colored bar with no content.
-%  - Removed [compactlogo] -- a documented no-op in the upstream template
-%    (both its code branches were identical).
-%  - Corrected NDGold to the official Dome Gold (#C99700 / PMS 117); the
-%    upstream value (#AE8F40) was never the University's actual color.
-%  - Added [cornerlogo] and \ndlogonote: a small mark in the bottom-left
-%    corner of every frame, plus a companion note box beside it,
-%    promoted from a pattern built ad hoc, per-deck, before this fork
-%    existed.
-%  - Went through two intermediate designs (a single [white]/[dark]
-%    toggle with per-element colors cascading from it) before landing
-%    on the current one: every visual element -- the title bar, the
-%    section-name bar, the title text, the canvas, the body text, the
-%    corner logo, the frametitle-bar monogram, and the title-page mark
-%    -- is its OWN independent color choice (see README), each with a
-%    sensible default but fully overridable, per Alex's own inventory
-%    of "options I am seeing" and his enumeration of each one's real
-%    choices. No black-canvas option anywhere in that history; the two
-%    canvas choices are white and NDBlue.
-%  - Per Alex, quoting Notre Dame's own guidelines directly: "the
-%    secondary academic mark or monogram should only be used when space
-%    does not allow the primary academic mark." The title page therefore
-%    always uses the primary (wide) mark regardless of [mark] -- there's
-%    always room on a title page -- while [mark] itself now governs only
-%    the corner logo, which is the one placement genuinely space-
-%    constrained enough to warrant the secondary mark as an option.
+% Adapted from the University of Oregon theme
+% (http://ix.cs.uoregon.edu/~peter/uotheme/) and pieces of the default
+% Beamer theme. Forked and modernized by the Dowling Lab, September
+% 2026 -- see README.md for the full option list and usage.
 
 \RequirePackage{etoolbox}
 \RequirePackage{xkeyval}
@@ -43,14 +12,9 @@
 \usepackage{tabularx}
 \RequirePackage{xcolor}
 
-% Color definitions, consolidated here now that every element's color is
-% its own independent option rather than a choice between two preset
-% \usecolortheme files (beamercolorthemeNotreDame{,White}.sty, both now
-% retired) -- NDBlue and NDGold are the two real ND colors this whole
-% option system maps every semantic name onto (see \nd@setcolor below).
-% The rest (EmphColor, HighlightBackground, KeywordColor, NDGold_sec)
-% carry over from those retired files for anyone still using the
-% \Highlight snippet documented in the README.
+% NDBlue and NDGold are the two official Notre Dame colors every
+% option below maps onto (see \nd@setcolor). The rest support the
+% \Highlight snippet documented in the README appendix.
 \definecolor{NDBlue}{HTML}{0C2340}
 \definecolor{NDGold}{HTML}{C99700}
 \definecolor{IrishGreen}{HTML}{00843D}
@@ -59,26 +23,14 @@
 \definecolor{HighlightBackground}{RGB}{255,255,0}
 \definecolor{KeywordColor}{RGB}{0,0,95}
 
-%% The options for this template
-%
-% NOTE on implementation: plain \DeclareOptionBeamer/\ProcessOptionsBeamer
-% (thin wrappers around LaTeX's own \DeclareOption/\ProcessOptions) cannot
-% match "key=value"-shaped option strings -- tested directly: declaring
-% \DeclareOptionBeamer{logo=black} and passing [logo=black] silently fails
-% to match, falling through to the default every time. So every option
-% here, including the plain on/off switches that upstream declared with
-% \DeclareOptionBeamer, is declared as an xkeyval \define@key instead (the
-% boolean ones with a [true] default, so bare `nav` still means
-% `nav=true`), all processed together in one \ProcessOptionsX<ND> call.
+%% Options -- see README.md for the full table. Implemented with
+%% xkeyval's \define@key, not \DeclareOptionBeamer, since plain
+%% \DeclareOption cannot match "key=value" option strings.
 
-% If this option [nav] is present, include the navigation buttons in
-% the lower right corner.  The default is no navigation buttons
 \newif\ifbeamer@nav
 \beamer@navfalse
 \define@key{ND}{nav}[true]{\csname beamer@nav#1\endcsname}
 
-% The option [noslidenumbers] suppresses the display of slide numbers.
-% Slide numbers are shown by default
 \newif\ifbeamer@noslidenumbers
 \beamer@noslidenumbersfalse
 \define@key{ND}{noslidenumbers}[true]{\csname beamer@noslidenumbers#1\endcsname}
@@ -87,102 +39,70 @@
 \beamer@fullFooterfalse
 \define@key{ND}{fullFooter}[true]{\csname beamer@fullFooter#1\endcsname}
 
-% --- The independent style options ------------------------------------
-% Each is its own choice with its own sensible default (noted per key),
-% not derived from a single overall "mode" -- but several defaults do
-% still consult [background], the one choice everything else most
-% naturally reads against.
-
-% background: the canvas. white (default) or blue (NDBlue -- there is
-% no black canvas option, deliberately, per Alex's own call).
+% background: white (default) or blue (NDBlue).
 \def\nd@background{white}
 \define@key{ND}{background}{\def\nd@background{#1}}
 
-% titlebar: the frametitle bar's own background. blue, gold, or none
-% (no colored box at all -- the title text then sits directly on the
-% canvas). Default: whichever of blue/gold contrasts with [background]
-% (blue bar on the white canvas, gold bar on the blue canvas) -- the
-% same "always the other main color" convention this theme has used
-% throughout its history.
+% titlebar: blue, gold, or none. Default: contrasts with [background].
 \let\nd@titlebar\undefined
 \define@key{ND}{titlebar}{\def\nd@titlebar{#1}}
 
-% sectionbar: the section-name bar above the title. blue, gold, or none
-% (default -- no bar, no section name shown, regardless of whether the
-% document actually has \section commands).
+% sectionbar: blue, gold, or none (default).
 \def\nd@sectionbar{none}
 \define@key{ND}{sectionbar}{\def\nd@sectionbar{#1}}
 
-% titlecolor: the frametitle TEXT color. blue, gold, black, or white.
-% Default: derived from [titlebar] if it has a color (white text on the
-% blue bar, black text on the gold bar, matching this theme's existing
-% palette pairings) or from [background] if [titlebar] is none (blue
-% text on the white canvas, white text on the blue canvas -- the same
-% pairing [textcolor] itself defaults to).
+% titlecolor: frametitle text color -- blue, gold, black, white.
+% Default: derived from [titlebar], or [background] if titlebar=none.
 \let\nd@titlecolor\undefined
 \define@key{ND}{titlecolor}{\def\nd@titlecolor{#1}}
 
-% textcolor: body text color. black, blue, gold, or white. Default:
-% derived from [background] (blue text on white, white text on blue).
-% Unlike earlier versions of this theme, this is NOT force-overridden
-% on the blue background -- every combination is available since every
-% element is now an independent choice; a low-contrast combination
-% (e.g. background=blue, textcolor=blue) is possible to ask for and is
-% not blocked, the same way [titlebar]=[titlecolor] both gold would be.
+% textcolor: body text color -- black, blue, gold, white.
+% Default: derived from [background].
 \let\nd@textcolor\undefined
 \define@key{ND}{textcolor}{\def\nd@textcolor{#1}}
 
-% cornerlogo: the small academic mark in the bottom-left corner of
-% every content frame (drawn via \ndcornerlogo, independent of the
-% frametitle bar's own monogram below). blue, gold, black, white,
-% fullcolor, or none (default -- no corner logo, matching this option's
-% original on/off-only design before it grew a color choice). Shape
-% (which mark) is set separately, by [mark].
+% cornerlogo: small mark, bottom-left of every content frame -- blue,
+% gold, black, white, fullcolor, or none (default).
 \def\nd@cornerlogo{none}
 \define@key{ND}{cornerlogo}{\def\nd@cornerlogo{#1}}
 
-% monogram: the small monogram inside the frametitle bar (this theme's
-% only asset that isn't the full academic mark -- just the "ND"
-% letterform, for the one placement tight enough to need it). blue,
-% gold, gold-metallic, white, or none. Default: whichever contrasts
-% with [titlebar] (white on the blue bar, blue on the gold bar) --
-% FOUND BY TESTING 2026-09, repeatedly: using the same color as [logo]/
-% [cornerlogo] here put a blue monogram on a blue bar and a gold
-% monogram on a gold bar, both invisible. If [titlebar] is none, there
-% is no bar for the monogram to sit in, so it is forced to none
-% regardless of this key -- an orphaned logo floating with no visual
-% anchor isn't a real option here.
+% monogram: small "ND" mark inside the frametitle bar -- blue, gold,
+% gold-metallic, white, or none. Default: contrasts with [titlebar];
+% forced to none when [titlebar]=none.
 \let\nd@monogram\undefined
 \define@key{ND}{monogram}{\def\nd@monogram{#1}}
 
-% titlepagelogo: the large academic mark on the title page. blue, gold,
-% black, white, fullcolor, or none. Default: derived from [background]
-% (blue on white, gold on blue), the same pairing [cornerlogo] would
-% use if defaulted the same way. ALWAYS the primary (wide) mark,
-% regardless of [mark] -- per Alex, quoting Notre Dame's own
-% guidelines: the secondary mark/monogram are for when space doesn't
-% allow the primary one, and a title page always has the room.
+% titlepagelogo: the title-page mark -- blue, gold, black, white,
+% fullcolor, or none. Default: derived from [background]. Always the
+% primary (wide) academic mark regardless of [mark] -- per Notre
+% Dame's own guidelines, the secondary mark/monogram are for when
+% space doesn't allow the primary one, and a title page always has
+% the room.
 \let\nd@titlepagelogo\undefined
 \define@key{ND}{titlepagelogo}{\def\nd@titlepagelogo{#1}}
 
-% mark: which academic-mark shape the CORNER logo uses (the title page
-% is always the primary mark -- see titlepagelogo above). primary
-% (default) is the wide lockup, shield beside "University of Notre
-% Dame"; secondary is the compact vertical lockup, shield above "Notre
-% Dame," for when the corner is too tight for the primary mark.
+% mark: which academic-mark shape [cornerlogo] uses -- primary
+% (default, wide lockup) or secondary (compact lockup, tight corners).
 \def\nd@mark{primary}
 \define@key{ND}{mark}{\def\nd@mark{#1}}
 
-% highlight: the presentation-wide default color for \hl{...} (see
-% below) when it's called with no color argument. gold, green (Irish
-% Green), blue, or none (bold, no color change at all). Default: gold.
+% titlelayout: which title-page template to use.
+% classic (default): beamer's centered title/author/institute/date
+% block, plus the bottom-left logo (\ndtitlepagelogodraw below).
+% leftrule: left-aligned title/subtitle/author/institute over a gold
+% rule, with the logo and \insertdate/\ndvenue sharing a footer row.
+\def\nd@titlelayout{classic}
+\define@key{ND}{titlelayout}{\def\nd@titlelayout{#1}}
+
+% highlight: default color for \hl{...} -- gold (default), green,
+% blue, or none.
 \def\nd@highlightdefault{gold}
 \define@key{ND}{highlight}{\def\nd@highlightdefault{#1}}
 
 \ProcessOptionsX<ND>
 
-% --- Resolve every default that depends on another option's value ----
-% (in dependency order: background first, since several others read it)
+% Resolve defaults that depend on another option's value (background
+% first, since several others read it).
 \ifx\nd@titlebar\undefined
   \ifdefstring{\nd@background}{blue}{\def\nd@titlebar{gold}}{\def\nd@titlebar{blue}}
 \fi
@@ -193,10 +113,13 @@
   \ifdefstring{\nd@background}{blue}{\def\nd@titlepagelogo{gold}}{\def\nd@titlepagelogo{blue}}
 \fi
 \ifx\nd@titlecolor\undefined
+  \ifdefstring{\nd@titlelayout}{leftrule}{%
+    \ifdefstring{\nd@background}{blue}{\def\nd@titlecolor{white}}{\def\nd@titlecolor{blue}}%
+  }{%
   \ifdefstring{\nd@titlebar}{blue}{\def\nd@titlecolor{white}}{%
   \ifdefstring{\nd@titlebar}{gold}{\def\nd@titlecolor{black}}{%
   \ifdefstring{\nd@background}{blue}{\def\nd@titlecolor{white}}{\def\nd@titlecolor{blue}}%
-  }}
+  }}}
 \fi
 \ifx\nd@monogram\undefined
   \ifdefstring{\nd@titlebar}{blue}{\def\nd@monogram{white}}{%
@@ -207,9 +130,8 @@
 
 \mode<presentation>
 
-% --- Color mapping helpers ---------------------------------------------
-% Every color key above takes a semantic name (blue, gold, black,
-% white); map each to the real \colorlet this theme actually defines.
+% Map each semantic color name (blue/gold/black/white) to its real
+% \colorlet.
 \newcommand{\nd@setcolor}[2]{% #1 = macro to define, #2 = semantic name
   \ifdefstring{#2}{blue}{\colorlet{#1}{NDBlue}}{%
   \ifdefstring{#2}{gold}{\colorlet{#1}{NDGold}}{%
@@ -224,14 +146,9 @@
 \nd@setcolor{nd@textcolorreal}{\nd@textcolor}
 \nd@setcolor{nd@backgroundcolor}{\nd@background}
 
-% \hl[color]{text} -- bold a phrase for emphasis, per Alex's own real
-% style ("I like to bold words in a phrase to add emphasis"), and
-% optionally color it one of the three real ND accent colors. With no
-% [color], uses whichever color [highlight] resolved to for the whole
-% deck (default gold); \hl[none]{...} always just bolds, regardless of
-% [highlight] -- a per-call escape hatch, not tied to the deck default.
-% \hl[gold|green|blue]{...} always uses that color for this one call,
-% regardless of [highlight].
+% \hl[color]{text}: bold, optionally colored, emphasis. No [color]
+% argument uses [highlight] (deck-wide default); \hl[none]{...} always
+% just bolds; \hl[gold|green|blue]{...} always uses that color.
 \newcommand{\hl}[2][]{%
   \def\nd@hlarg{#1}%
   \ifx\nd@hlarg\@empty
@@ -247,6 +164,12 @@
   }}}}%
 }
 
+% \ndvenue{text}: stores a venue/location string, like \title/\date
+% do. Shown on the title page by [titlelayout]=leftrule; also defined
+% unconditionally so a deck can reuse it in its own header/footer.
+\newcommand{\nd@venue}{}
+\newcommand{\ndvenue}[1]{\renewcommand{\nd@venue}{#1}}
+
 \setbeamertemplate{frametitle}[default][center]
 % Removes the logo from the lower right so that we can place it less obtrusively
 \defbeamertemplate*{sidebar right}{notredame theme}
@@ -256,10 +179,9 @@
   \vskip2pt%
 }
 
-% Redefine the frameheader to include a logo. Two shapes, depending on
-% [titlebar]: the original colored beamercolorbox (titlebar != none), or
-% (titlebar == none) plain title text directly on the canvas, no box,
-% no logo slot (the monogram is forced to none in this case already).
+% Frametitle: two shapes depending on [titlebar]. none -> plain title
+% text on the canvas, no box, no logo slot. Otherwise -> the colored
+% beamercolorbox with the monogram in its own column.
 \ifdefstring{\nd@titlebar}{none}{%
   \defbeamertemplate*{frametitle}{notredame theme}[1][left]
   {
@@ -347,9 +269,8 @@
 \setbeamercolor*{normal text}{fg=nd@textcolorreal}
 \setbeamercolor*{alerted text}{fg=red}
 
-% Bullet/list colors: NDBlue and NDGold, whichever isn't the background
-% (matching this theme's own established convention), so they stay
-% visible regardless of [background].
+% Bullet/list colors: NDBlue and NDGold, whichever isn't the
+% background, so they stay visible regardless of [background].
 \ifdefstring{\nd@background}{blue}{%
   \setbeamercolor{itemize item}{fg=NDGold}
   \setbeamercolor{itemize subitem}{fg=NDGold!60!white}
@@ -364,15 +285,9 @@
   \setbeamercolor{description item}{fg=NDBlue}
 }
 
-% Frametitle bar (titlebar != none): background + text color, both
-% independent choices now rather than a fixed palette pairing. Also
-% covers "titlelike" (the *title page's* title, a separate beamer color
-% from the per-slide frametitle above) with the same pairing -- FOUND
-% BY TESTING 2026-09: this used to come for free from the two retired
-% \usecolortheme files (each set titlelike=parent=palette secondary);
-% deleting them without an explicit replacement here left the title
-% page's title in beamer's own bland fallback (a generic bluish-purple,
-% no background box at all) instead of this theme's actual colors.
+% Frametitle bar background/text, and titlelike (the title page's own
+% title color) -- both follow [titlebar]/[titlecolor] directly, since
+% neither comes from a preset color theme.
 \ifdefstring{\nd@titlebar}{none}{%
   \setbeamercolor{titlelike}{bg=,fg=nd@titlecolorreal}
 }{%
@@ -383,13 +298,8 @@
 \setbeamercolor*{page in head/foot}{fg=nd@textcolorreal}
 
 % [sectionbar]: show the current section name in its own colored bar
-% above the title. REBUILT 2026-09 -- the upstream version called
-% \useoutertheme{miniframes}, which added a colored bar but never
-% actually displayed a section name or progress dots in this theme (the
-% custom frametitle template above doesn't integrate with miniframes'
-% own headline machinery). This is a direct, working headline template
-% instead of trying to coax miniframes into cooperating with a
-% frametitle template it wasn't designed for.
+% above the title. A direct headline template, not miniframes (which
+% doesn't integrate with this theme's own frametitle template).
 \ifdefstring{\nd@sectionbar}{none}{}{%
   \setbeamercolor{section in head/foot}{bg=nd@sectionbarcolor,fg=nd@titlecolorreal}
   \setbeamerfont{section in head/foot}{series=\bfseries}
@@ -403,55 +313,65 @@
 }
 
 % --- Logo and title-page graphic --------------------------------------
-% No college sub-branding anywhere: every mark is the plain university
-% mark. The title page is always the PRIMARY (wide) mark -- see the
-% [titlepagelogo] comment above for why -- in the color [titlepagelogo]
-% resolves to; [titlepagelogo]=none omits it.
-%
-% Placement: bottom-left corner, not centered under the author block.
-% ORIGINALLY used plain \titlegraphic{...}, which beamer's own default
-% title-page template centers, small, below the author/date block --
-% Alex, seeing it rendered: "I don't want the ND logo centered; instead,
-% I want it larger in the lower-left corner. I like it better." Uses
-% the same overlay technique as \ndcornerlogo (TikZ remember-picture,
-% anchored to the physical page corner) instead of \titlegraphic.
-%
-% \ndtitlepagelogodraw is a plain command, NOT wired up automatically
-% via \addtobeamertemplate{title page}{\setbeamertemplate{background}
-% {...}}{} -- that was the first approach tried, and it silently drew
-% the WRONG logo (whatever [cornerlogo]/[mark] resolved to, not
-% [titlepagelogo]/primary). FOUND BY TESTING 2026-09, via a minimal
-% isolated case (a background swapped this way inside a template's own
-% before-hook stayed the OLD background on the very page that set it):
-% Beamer locks in which background template a frame uses at
-% \begin{frame} time, before the frame's own content -- including
-% \titlepage itself -- has run. A change made from inside \titlepage's
-% own hook is simply too late for that same frame.
-% So the deck sets the title page's background itself, from OUTSIDE
-% \begin{frame} -- exactly like this same template's nav-symbols line
-% already does in main.tex (confirmed working the same way, by the same
-% isolated test):
-%   {
-%   \setbeamertemplate{navigation symbols}{}
-%   \setbeamertemplate{background}{\ndtitlepagelogodraw}
-%   \begin{frame}[plain]
-%     \titlepage
-%   \end{frame}
-%   }
+% [titlelayout]=classic: \ndtitlepagelogodraw draws the primary mark
+% (color from [titlepagelogo]), bottom-left, via a TikZ overlay
+% anchored to the physical page corner. A deck sets it as the title
+% frame's OWN background, from OUTSIDE \begin{frame} (see README /
+% main.tex): Beamer locks in a frame's background at \begin{frame}
+% time, before the frame's own content runs, so setting it from inside
+% a \titlepage hook doesn't take effect for that same frame.
 % \ndtitlepagelogodraw is always defined (empty when [titlepagelogo]=
-% none) so a deck can reference it unconditionally.
+% none, or when [titlelayout]=leftrule, which draws its own logo
+% directly as title-page content instead) so a deck can reference it
+% unconditionally.
 \newcommand{\ndtitlepagelogomargin}{0.15mm}
 \newcommand{\ndtitlepagelogoheight}{2.6cm}
 \newcommand{\ndtitlepagelogodraw}{}
-\ifdefstring{\nd@titlepagelogo}{none}{}{%
-  \renewcommand{\ndtitlepagelogodraw}{%
-    \begin{tikzpicture}[remember picture, overlay]
-      \node[anchor=south west, xshift=\ndtitlepagelogomargin, yshift=\ndtitlepagelogomargin]
-        at (current page.south west)
-        {\includegraphics[height=\ndtitlepagelogoheight]{logos/academic-mark/primary/\nd@titlepagelogo}};
-    \end{tikzpicture}%
+\ifdefstring{\nd@titlelayout}{leftrule}{}{%
+  \ifdefstring{\nd@titlepagelogo}{none}{}{%
+    \renewcommand{\ndtitlepagelogodraw}{%
+      \begin{tikzpicture}[remember picture, overlay]
+        \node[anchor=south west, xshift=\ndtitlepagelogomargin, yshift=\ndtitlepagelogomargin]
+          at (current page.south west)
+          {\includegraphics[height=\ndtitlepagelogoheight]{logos/academic-mark/primary/\nd@titlepagelogo}};
+      \end{tikzpicture}%
+    }
   }
 }
+
+% --- [titlelayout]=leftrule: a second title-page template -------------
+% Left-aligned title/subtitle/author/institute block, a gold rule,
+% then the logo and \insertdate/\ndvenue sharing one footer row (logo
+% left, date right, both vertically centered against each other).
+% \raggedright overrides beamer's own default title-page centering,
+% since this template replaces that default outright.
+\ifdefstring{\nd@titlelayout}{leftrule}{%
+  \newcommand{\ndleftrulelogoheight}{1.4cm}
+  \setbeamertemplate{title page}{%
+    \raggedright
+    \vskip 0.3cm
+    {\Huge\bfseries\color{nd@titlecolorreal}\inserttitle\par}%
+    \vskip 0.1cm
+    {\LARGE\bfseries\color{NDGold}\insertsubtitle\par}%
+    \vskip 1.1cm
+    {\large\bfseries\color{nd@textcolorreal}\insertauthor\par}%
+    \vskip 0.2cm
+    {\normalsize\color{nd@textcolorreal}\insertinstitute\par}%
+    \vskip 1.1cm
+    \color{NDGold}\rule{\linewidth}{1.2pt}\par
+    \vskip 0.6cm
+    \noindent\begin{minipage}[c]{0.42\linewidth}
+      \ifdefstring{\nd@titlepagelogo}{none}{}{%
+        \includegraphics[height=\ndleftrulelogoheight]{logos/academic-mark/primary/\nd@titlepagelogo}%
+      }%
+    \end{minipage}%
+    \hfill
+    \begin{minipage}[c]{0.55\linewidth}
+      \raggedleft\normalsize\color{nd@textcolorreal}\insertdate
+      \ifdefempty{\nd@venue}{}{\\\nd@venue}%
+    \end{minipage}%
+  }
+}{}
 
 % The small monogram inside the frametitle bar (only relevant when
 % [titlebar] != none; forced to none otherwise, resolved above).
@@ -463,25 +383,10 @@
 }
 
 % --- Corner logo and its companion note box ---------------------------
-% Promoted from a pattern built ad hoc, per-deck, before this fork
-% existed: a small academic mark sitting in the bottom-left corner of
-% every content frame, independent of the frametitle bar's own
-% monogram above. [cornerlogo]=none (the default) omits it entirely.
-%
-% \ndcornerlogomargin controls how close it sits to the page edge --
-% some margin avoids a projector/printer clipping it outright, but
-% Alex's call 2026-09 is to push it tighter into the corner than the
-% original per-deck version (which used 0.5mm): 0.15mm here. Override
-% with \renewcommand{\ndcornerlogomargin}{...} before \begin{document}
-% if a specific deck wants something else.
+% A small academic mark in the bottom-left corner of every content
+% frame, independent of the frametitle bar's own monogram above.
+% [cornerlogo]=none (the default) omits it entirely.
 \newcommand{\ndcornerlogomargin}{0.15mm}
-% \ndcornerlogoheight started at the size tuned, by eye, against the
-% primary mark in the Dowling Lab's own seminar deck (0.2475 of a
-% 12.8cm-wide slide, at that mark's 2.42:1 aspect ratio, works out to
-% ~1.3cm tall) -- height-based rather than width-based so it stays a
-% consistent vertical footprint regardless of [mark]'s aspect ratio.
-% Alex's call 2026-09, seeing it rendered against these marks' real
-% (tighter-cropped) proportions: too big at 1.3cm -- shrunk to 75%.
 \newcommand{\ndcornerlogoheight}{0.975cm}
 
 \ifdefstring{\nd@cornerlogo}{none}{}{%
@@ -490,10 +395,10 @@
   \newlength{\ndcornerlogowidth}
   \settowidth{\ndcornerlogowidth}{\usebox{\nd@cornerlogobox}}
 
-  % \ndcornerlogo -- draws the corner logo. Called automatically as the
+  % \ndcornerlogo -- draws the corner logo. Set automatically as the
   % frame background whenever [cornerlogo] is not none; can also be
   % called directly (e.g. \setbeamertemplate{background}{\ndcornerlogo})
-  % from a specific deck for more control.
+  % for more control.
   \newcommand{\ndcornerlogo}{%
     \begin{tikzpicture}[remember picture, overlay]
       \node[anchor=south west, xshift=\ndcornerlogomargin, yshift=\ndcornerlogomargin]
@@ -505,12 +410,10 @@
   % \ndlogonote[align]{text} -- a note box in the white space to the
   % right of the corner logo: horizontally centered between the logo's
   % right edge and the slide's right edge, vertically centered on the
-  % logo's own vertical middle. For a short takeaway line (the common
-  % case, [align] defaults to center) or a left-aligned reference list
-  % (pass [left]). Measures the logo's actual rendered size, so it
-  % stays aligned with whichever [mark] is active. Only defined when
-  % [cornerlogo] is not none, since it positions itself relative to
-  % that logo's measured size.
+  % logo's own vertical middle. [align] defaults to center; pass
+  % [left] for a reference list. Only defined when [cornerlogo] is not
+  % none, since it positions itself relative to the logo's measured
+  % size.
   \newlength{\nd@notegap}
   \setlength{\nd@notegap}{4mm}
   \newlength{\nd@noteRmargin}

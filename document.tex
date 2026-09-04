@@ -1,17 +1,4 @@
-%% Start of main content
-% REPLACED 2026-09 by the Dowling Lab fork: the previous document.tex
-% was a generic, 2009-era "how Beamer overlays/verbatim/pstricks work"
-% tutorial, unrelated to this theme specifically. Testing it directly
-% (not just reading it) turned up three independent, pre-existing
-% problems -- a broken verbatim block, several commands (\bs) used but
-% never defined, and real pstricks drawing commands (\nccurve,
-% \pscirclebox, ...) that cannot render under plain pdflatex at all
-% (pstricks needs the classic latex+dvips+ps2pdf pipeline; it fails
-% with "PSTricks_Not_Configured_For_This_Format" otherwise) -- on top
-% of which none of it demonstrated anything specific to this theme.
-% Replaced with a short, focused demo of the actual options and
-% commands this fork adds, which does compile cleanly under plain
-% pdflatex (verified 2026-09, not just written and assumed).
+%% A short, focused demo of this fork's own options and commands.
 
 \section{Colors and Background}
 
@@ -23,19 +10,13 @@ Every visual element is its own choice, not a single overall "mode":
   \item \texttt{titlebar} -- blue, gold, or none
   \item \texttt{titlecolor}, \texttt{textcolor} -- blue, gold, black, white
   \item \texttt{cornerlogo}, \texttt{monogram}, \texttt{titlepagelogo}
+  \item \texttt{titlelayout} -- classic (default) or leftrule
 \end{itemize}
 Each has a sensible default (see the README), but every combination is
 available -- this deck itself is built with\\
 \texttt{\bs usetheme[sectionbar=gold,cornerlogo=blue]\{NotreDame\}}.
 
 \vspace{0.5em}
-% FOUND BY TESTING 2026-09: this frame's body text used to run past
-% the frame boundary and collide with the corner logo -- a single
-% \usetheme call can only show the one option combination it was
-% actually built with (options aren't per-frame), and the full
-% explanation of that plus the nav/fullFooter caveat didn't fit
-% alongside the itemize above. Trimmed to one line; both points (and
-% the nav/fullFooter collision) are already documented in the README.
 \scriptsize Options are set once for the whole document -- see the
 README for the full list, defaults, and known collisions
 (\texttt{nav}, \texttt{fullFooter}).
