@@ -76,7 +76,18 @@ backend=biber]{biblatex}
 \title{My Title}
 %\subtitle{}
 
-\date[\specialdate\today \hspace*{1em} Occasion]{\today \\ Occasion}
+% FOUND BY TESTING 2026-09: the placeholder \date long form used to add
+% a second line ("\\ Occasion") purely for its own sake, and \institute
+% declared a second, entirely unused affiliation (\inst{2} -- \author
+% only ever references \inst{1}) -- upstream boilerplate that padded
+% the title page's vertical content well past what a real deck would
+% use. Harmless at the old, smaller \titlegraphic size, but the larger,
+% bottom-left title-page logo Alex asked for ("I want it larger in the
+% lower-left corner") now reaches high enough to collide with that
+% extra height. Trimmed to a single real affiliation and a one-line
+% date -- both actually representative of a normal deck, and the
+% collision is gone as a direct result (confirmed by rendering).
+\date{\today}
 % - Use the \inst{?} command only if the authors have different
 %   affiliation.
 %\author{F.~Author\inst{1} \and S.~Another\inst{2}}
@@ -85,13 +96,8 @@ backend=biber]{biblatex}
 % - Use the \inst command only if there are several affiliations.
 % - Keep it simple, no one is interested in your street address.
 \institute[\hspace*{1em} Notre Dame]{
-\inst{1}%
 Department of Applied \& Computational Mathematics \& Statistics\\
-University of Notre Dame du Lac
-\and
-\inst{2}%
-Department of Theoretical Philosophy\\
-University of E}
+University of Notre Dame du Lac}
 
 % This is only inserted into the PDF information catalog. Can be left
 % out.
@@ -147,8 +153,16 @@ University of E}
 
 \begin{document}
 %% Title Slide
+% \setbeamertemplate{background} is set HERE, outside \begin{frame},
+% not inside it -- Beamer locks in a frame's background at
+% \begin{frame} time, before the frame's own content runs, so setting
+% it from inside \titlepage itself is too late (see
+% \ndtitlepagelogodraw's comment in beamerthemeNotreDame.sty). Every
+% deck built on this theme needs this same wrapping for its title
+% frame.
 {
 \setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{background}{\ndtitlepagelogodraw}
 \begin{frame}[plain]
 	\titlepage
 \end{frame}

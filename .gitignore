@@ -1,3 +1,17 @@
-/presentation.pdf
-/presentation.synctex.gz
-/tmp/
+# LaTeX build artifacts for the bundled demo (main.tex/document.tex) --
+# see README, "Compiled demo output (.pdf, .ps, and other build
+# artifacts) is intentionally not committed to this repository."
+*.aux
+*.bbl
+*.bcf
+*.blg
+*.log
+*.nav
+*.out
+*.pdf
+*.ps
+*.run.xml
+*.snm
+*.synctex.gz
+*.toc
+*.vrb

@@ -407,8 +407,50 @@
 % mark. The title page is always the PRIMARY (wide) mark -- see the
 % [titlepagelogo] comment above for why -- in the color [titlepagelogo]
 % resolves to; [titlepagelogo]=none omits it.
+%
+% Placement: bottom-left corner, not centered under the author block.
+% ORIGINALLY used plain \titlegraphic{...}, which beamer's own default
+% title-page template centers, small, below the author/date block --
+% Alex, seeing it rendered: "I don't want the ND logo centered; instead,
+% I want it larger in the lower-left corner. I like it better." Uses
+% the same overlay technique as \ndcornerlogo (TikZ remember-picture,
+% anchored to the physical page corner) instead of \titlegraphic.
+%
+% \ndtitlepagelogodraw is a plain command, NOT wired up automatically
+% via \addtobeamertemplate{title page}{\setbeamertemplate{background}
+% {...}}{} -- that was the first approach tried, and it silently drew
+% the WRONG logo (whatever [cornerlogo]/[mark] resolved to, not
+% [titlepagelogo]/primary). FOUND BY TESTING 2026-09, via a minimal
+% isolated case (a background swapped this way inside a template's own
+% before-hook stayed the OLD background on the very page that set it):
+% Beamer locks in which background template a frame uses at
+% \begin{frame} time, before the frame's own content -- including
+% \titlepage itself -- has run. A change made from inside \titlepage's
+% own hook is simply too late for that same frame.
+% So the deck sets the title page's background itself, from OUTSIDE
+% \begin{frame} -- exactly like this same template's nav-symbols line
+% already does in main.tex (confirmed working the same way, by the same
+% isolated test):
+%   {
+%   \setbeamertemplate{navigation symbols}{}
+%   \setbeamertemplate{background}{\ndtitlepagelogodraw}
+%   \begin{frame}[plain]
+%     \titlepage
+%   \end{frame}
+%   }
+% \ndtitlepagelogodraw is always defined (empty when [titlepagelogo]=
+% none) so a deck can reference it unconditionally.
+\newcommand{\ndtitlepagelogomargin}{0.15mm}
+\newcommand{\ndtitlepagelogoheight}{2.6cm}
+\newcommand{\ndtitlepagelogodraw}{}
 \ifdefstring{\nd@titlepagelogo}{none}{}{%
-  \titlegraphic{\includegraphics[height=1.5cm]{logos/academic-mark/primary/\nd@titlepagelogo}}
+  \renewcommand{\ndtitlepagelogodraw}{%
+    \begin{tikzpicture}[remember picture, overlay]
+      \node[anchor=south west, xshift=\ndtitlepagelogomargin, yshift=\ndtitlepagelogomargin]
+        at (current page.south west)
+        {\includegraphics[height=\ndtitlepagelogoheight]{logos/academic-mark/primary/\nd@titlepagelogo}};
+    \end{tikzpicture}%
+  }
 }
 
 % The small monogram inside the frametitle bar (only relevant when

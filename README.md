@@ -12,9 +12,19 @@ Copy the `.sty` files and the `logos/` directory into the same directory as your
 \documentclass{beamer}
 \usetheme{NotreDame}
 \begin{document}
-%% Slides
+%% Title slide -- this exact wrapping is required, see note below
+{
+\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{background}{\ndtitlepagelogodraw}
+\begin{frame}[plain]
+  \titlepage
+\end{frame}
+}
+%% Other slides
 \end{document}
 ```
+
+**The title slide needs that exact wrapping — `\setbeamertemplate{background}{\ndtitlepagelogodraw}` set *outside* `\begin{frame}`, in its own group, right beside the navigation-symbols line.** FOUND BY TESTING 2026-09: Beamer locks in which background template a frame will use at `\begin{frame}` time, before the frame's own content (including `\titlepage` itself) has run — so setting the background from *inside* `\titlepage`'s own hook is simply too late, and doesn't take effect for that same frame (confirmed with a minimal isolated case). `\ndtitlepagelogodraw` is always defined, even when `titlepagelogo=none` (in which case it's empty), so this line is always safe to include verbatim regardless of your option choices.
 
 See `main.tex` / `document.tex` for a fuller working example — build it with `pdflatex main.tex` (twice, for reasons explained below) to see several of the options in this README rendered.
 
@@ -70,6 +80,8 @@ There are three logo placements, each independently colorable, and one shape cho
 3. **Title-bar monogram** (`monogram`) — the small "ND" letterform inside the frametitle bar (only relevant when `titlebar != none`). This is the tightest placement of the three, which is why it's the one spot using the monogram asset instead of the full academic mark.
 
 `cornerlogo` and `titlepagelogo` support `fullcolor` (the real two-tone gold-shield/blue-wordmark treatment); `monogram` doesn't have a fullcolor variant (the mark is a solid letterform, not a two-part lockup) but does have `gold-metallic` as a second gold option.
+
+The title-page mark sits in the bottom-left corner, larger than the corner logo elsewhere (not centered under the author/date block, which is beamer's own default `\titlegraphic` placement). `\ndtitlepagelogomargin` (default `0.15mm`) and `\ndtitlepagelogoheight` (default `2.6cm`) control its distance from the page corner and its size — override with `\renewcommand{...}{...}` before `\begin{document}`, same as the corner logo's own analogous lengths below. Drawn via `\ndtitlepagelogodraw` — see the Installation section above for the exact wrapping this needs around your title-slide frame, and why.
 
 ## `\hl[color]{text}` — bold, colored emphasis
 

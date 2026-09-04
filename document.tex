@@ -15,7 +15,7 @@
 
 \section{Colors and Background}
 
-\begin{frame}
+\begin{frame}[fragile]
 \frametitle{The independent style options}
 Every visual element is its own choice, not a single overall "mode":
 \begin{itemize}
@@ -25,16 +25,20 @@ Every visual element is its own choice, not a single overall "mode":
   \item \texttt{cornerlogo}, \texttt{monogram}, \texttt{titlepagelogo}
 \end{itemize}
 Each has a sensible default (see the README), but every combination is
-available -- this deck itself is built with
+available -- this deck itself is built with\\
 \texttt{\bs usetheme[sectionbar=gold,cornerlogo=blue]\{NotreDame\}}.
-(Options are set once for the whole document, in that one
-\texttt{\bs usetheme} call -- not per-frame, so a single demo deck
-like this one can only show the combination it was actually built
-with; \texttt{titlebar=none}, for a bar-free look with the title text
-straight on the canvas, is a real option but needs its own separate
-build to see live. Also not shown here: \texttt{nav} and
-\texttt{fullFooter} both visibly collide with \texttt{cornerlogo}'s
-note box, since none of them know about each other -- see the README.)
+
+\vspace{0.5em}
+% FOUND BY TESTING 2026-09: this frame's body text used to run past
+% the frame boundary and collide with the corner logo -- a single
+% \usetheme call can only show the one option combination it was
+% actually built with (options aren't per-frame), and the full
+% explanation of that plus the nav/fullFooter caveat didn't fit
+% alongside the itemize above. Trimmed to one line; both points (and
+% the nav/fullFooter collision) are already documented in the README.
+\scriptsize Options are set once for the whole document -- see the
+README for the full list, defaults, and known collisions
+(\texttt{nav}, \texttt{fullFooter}).
 \end{frame}
 
 \subsection{Highlighting}
