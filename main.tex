@@ -17,12 +17,16 @@
 {
 %% OPTIONS -- see README for the full, current list
 % nav - Enables a bottom right navigation bar
-% nologo - Removes the small logo from every slide's title bar
-% sections - Shows the current section name under the slide title
 % noslidenumbers - Removes counting of slides in bottom right
 % fullFooter - Enables a more descriptive footer
-% cornerlogo, mark=, logo=, textcolor= -- see README
-\usetheme[sections,nav,fullFooter]{NotreDame}
+% sectionbar=, titlebar=, titlecolor=, background=, textcolor=,
+% cornerlogo=, monogram=, titlepagelogo=, mark=, highlight= -- see README
+% NOT combined with [fullFooter] or [nav] here: FOUND BY TESTING
+% 2026-09 -- \ndcornerlogo/\ndlogonote assume nothing else occupies the
+% bottom strip of the slide, and both fullFooter's 3-part bar and nav's
+% icon row visibly collide with them. Not something this theme
+% resolves automatically; see the README's note on this.
+\usetheme[sectionbar=gold,cornerlogo=blue]{NotreDame}
 \setbeamercovered{transparent}
 }
 
@@ -35,7 +39,13 @@
 \usepackage[scaled=.90]{helvet}
 \usepackage{courier}
 \usepackage[T1]{fontenc}
-\usepackage{pstricks,pst-node,pst-text,pst-3d}
+% pstricks (plus pst-node/pst-text/pst-3d) dropped 2026-09: it needs the
+% classic latex+dvips+ps2pdf pipeline to actually draw anything --
+% under plain pdflatex (what this fork and every deck built from it
+% actually use) its real graphics commands fail with "PSTricks_Not_
+% Configured_For_This_Format." The only thing this file used it for was
+% \blue/\red/\black/\green as declarative color switches, which are
+% defined directly below instead, with no pstricks dependency.
 \usepackage{color,colortbl}
 
 \usepackage{geometry}
@@ -94,15 +104,32 @@ University of E}
 % \pgfdeclareimage[height=0.5cm]{university-logo}{university-logo-filename}
 % \logo{\pgfuseimage{university-logo}}
 
-% define some basic colours - already defined if pstricks is used
+% define some basic colours. FOUND BY TESTING 2026-09: this file used
+% to \newcommand these while pstricks (loaded above, since removed) was
+% also loaded and already defined them, giving a hard "Command \blue
+% already defined" error. Now that pstricks is gone, plain \newcommand
+% is correct again -- and, since document.tex's own prose uses both
+% {\red Define} (no braced argument right after) and \bs{\blue{alt}}
+% (an immediately-following braced group), these stay deliberately
+% declarative (no argument) rather than argument-taking: {\blue{alt}}
+% is just \blue switching color, then a separate group {alt} inheriting
+% it -- an argument-taking \blue{#1} would have broken the first style
+% instead (silently swallowing the next single token as its argument,
+% e.g. {\red Define} -> "D", leaving "efine" uncolored).
 \setbeamercolor{blue}{fg=blue!90}
-\newcommand{\blue}[1]{\usebeamercolor[fg]{blue}#1}
+\newcommand{\blue}{\usebeamercolor[fg]{blue}}
 \setbeamercolor{red}{fg=red!80,bg=yellow}
-\newcommand{\red}[1]{\usebeamercolor[fg]{red}#1}
+\newcommand{\red}{\usebeamercolor[fg]{red}}
 \setbeamercolor{black}{fg=black!99}
-\newcommand{\black}[1]{\usebeamercolor[fg]{black}#1}
+\newcommand{\black}{\usebeamercolor[fg]{black}}
 \setbeamercolor{green}{fg=green!80}
-\newcommand{\green}[1]{\usebeamercolor[fg]{green}#1}
+\newcommand{\green}{\usebeamercolor[fg]{green}}
+
+% \bs -- a literal backslash, for showing command names as text (e.g.
+% \bs documentclass prints "\documentclass"). Used throughout
+% document.tex but was never actually defined anywhere in this
+% template -- FOUND BY TESTING 2026-09, another pre-existing gap.
+\newcommand{\bs}{\textbackslash}
 
 % Delete this, if you do not want the table of contents to pop up at
 % the beginning of each subsection:
