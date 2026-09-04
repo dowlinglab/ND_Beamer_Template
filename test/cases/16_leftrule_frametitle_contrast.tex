@@ -1,0 +1,36 @@
+\documentclass{beamer}
+\usetheme[titlelayout=leftrule]{NotreDame}
+\title{Claude for Research}
+\subtitle{Beyond the Chatbot}
+\author{A. Researcher}
+\institute{Dept \\ a@nd.edu}
+\date{17 September 2026}
+\begin{document}
+{
+\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{background}{\ndtitlepagelogodraw}
+\begin{frame}[plain]\titlepage\end{frame}
+}
+\begin{frame}[fragile]{Content}
+% A plain compile check can't catch this bug's own failure mode: the
+% original defect compiled cleanly and rendered blue frametitle text
+% on the blue title bar -- invisible, but not an error. [titlebar]
+% defaults to blue here (background is white, unset), so [titlecolor]
+% must default to white regardless of [titlelayout] -- see
+% beamerthemeNotreDame.sty's note above \nd@titlepagetitlecolor for
+% why an earlier version of this file got this wrong specifically for
+% titlelayout=leftrule.
+% \nd@titlecolor is an internal ("@") theme variable -- \makeatletter is
+% needed here, in a plain document body, to reference it at all (the
+% same catcode rule that makes \ndtitlepagelogodraw need to be a public,
+% non-"@" name: see beamerthemeNotreDame.sty).
+\makeatletter
+\ifdefstring{\nd@titlecolor}{white}{%
+  \typeout{ND-TEST-OK: titlecolor=\nd@titlecolor (frametitle bar is titlebar-aware, not background-aware)}%
+}{%
+  \typeout{ND-TEST-FAIL: titlecolor=\nd@titlecolor, expected white (titlebar defaults to blue here -- titlecolor must contrast with the BAR, not the background, regardless of titlelayout)}%
+}
+\makeatother
+Body text.
+\end{frame}
+\end{document}

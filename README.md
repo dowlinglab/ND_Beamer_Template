@@ -53,7 +53,7 @@ Each of these is its own choice with its own sensible default — not a single o
 | `background` | `white`, `blue` | `white` |
 | `titlebar` | `blue`, `gold`, `none` | contrasts with `background` (blue bar on white, gold bar on blue) |
 | `sectionbar` | `blue`, `gold`, `none` | `none` |
-| `titlecolor` | `blue`, `gold`, `black`, `white` | derived from `titlebar` (white on blue bar, black on gold bar), or from `background` if `titlebar=none` or `titlelayout=leftrule` |
+| `titlecolor` | `blue`, `gold`, `black`, `white` | derived from `titlebar` (white on blue bar, black on gold bar), or from `background` if `titlebar=none` |
 | `textcolor` | `black`, `blue`, `gold`, `white` | derived from `background` (blue text on white, white text on blue) |
 | `cornerlogo` | `blue`, `gold`, `black`, `white`, `fullcolor`, `none` | `none` |
 | `monogram` | `blue`, `gold`, `gold-metallic`, `white`, `none` | contrasts with `titlebar` (white on blue bar, blue on gold bar); forced to `none` if `titlebar=none` |
@@ -88,6 +88,8 @@ There is **no black-canvas option**. `background` is white or blue (NDBlue) only
 ```
 
 `leftrule` reuses the stock `\title`/`\subtitle`/`\author`/`\institute`/`\date` fields as-is — a department and an email, for instance, are just two lines of `\institute{}` separated by `\\`. The mark's size and color follow the same `titlepagelogo` option as `classic` (always the primary mark, per the guideline in the next section); its size in the footer row is controlled separately by `\ndleftrulelogoheight` (default `1.4cm`, only defined when `titlelayout=leftrule`).
+
+`leftrule`'s title-page title is always background-aware (blue on white, white on blue) and is **not** controlled by `titlecolor` — that option is specifically the per-slide frametitle bar's text color, which exists on every content frame regardless of which title layout you use, and needs its own bar-aware default independent of the title page.
 
 ### `\ndvenue{text}` — a venue/location field
 
