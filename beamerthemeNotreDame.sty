@@ -391,9 +391,16 @@
 
 \ifdefstring{\nd@cornerlogo}{none}{}{%
   \newsavebox{\nd@cornerlogobox}
-  \savebox{\nd@cornerlogobox}{\includegraphics[height=\ndcornerlogoheight]{logos/academic-mark/\nd@mark/\nd@cornerlogo}}
   \newlength{\ndcornerlogowidth}
-  \settowidth{\ndcornerlogowidth}{\usebox{\nd@cornerlogobox}}
+  % Deferred to \AtBeginDocument, not measured immediately here: a
+  % \savebox measures and fixes its content right away, so measuring at
+  % \usetheme's own processing time would freeze in that DEFAULT height
+  % before a deck's own \renewcommand{\ndcornerlogoheight}{...} (which
+  % runs later, per the override instructions above) ever takes effect.
+  \AtBeginDocument{%
+    \savebox{\nd@cornerlogobox}{\includegraphics[height=\ndcornerlogoheight]{logos/academic-mark/\nd@mark/\nd@cornerlogo}}%
+    \settowidth{\ndcornerlogowidth}{\usebox{\nd@cornerlogobox}}%
+  }
 
   % \ndcornerlogo -- draws the corner logo. Set automatically as the
   % frame background whenever [cornerlogo] is not none; can also be

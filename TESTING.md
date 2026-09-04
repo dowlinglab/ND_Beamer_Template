@@ -30,12 +30,23 @@ or the log contains a genuine LaTeX error** (a line starting with `!` — the
 error marker LaTeX itself uses, checked in preference to grepping for the
 word "error", which also appears in several harmless package messages).
 
-**This only catches things that make LaTeX itself error out** — an
-undefined control sequence, a missing file, mismatched braces, that kind of
-thing. It does **not** check that anything actually looks right: colors,
+**By default this only catches things that make LaTeX itself error out** —
+an undefined control sequence, a missing file, mismatched braces, that kind
+of thing. It does **not** check that anything actually looks right: colors,
 spacing, overlapping text, a logo landing in the wrong place, or a value
 silently resolving to the wrong default. A change can pass every case here
-and still be visibly broken. For anything touching layout, color
+and still be visibly broken.
+
+A case can go further and assert a real numeric or logical outcome itself,
+for bugs that compile perfectly cleanly and are just silently wrong
+otherwise — `15_cornerlogo_size_override.tex` does this with a plain
+`\ifdim` check against the actual measured logo width, `\typeout`-ing
+`ND-TEST-FAIL: ...` if it doesn't match what the override should have
+produced; the script treats that marker as a failure exactly like a `!`
+error. Use this pattern for a new case whenever "did it compile" wouldn't
+actually have caught the bug you're guarding against.
+
+For anything touching layout, color
 resolution, or logo placement, also render the affected case(s) to an image
 and look at it:
 
@@ -67,6 +78,7 @@ The cases in `test/cases/` are numbered by theme, not by strict priority:
 | `12_leftrule_full_options` | `leftrule` combined with `cornerlogo`, `sectionbar`, and `mark=secondary` |
 | `13_hl_all_colors` | `\hl{}` in every color, plus the deck-wide `highlight` default |
 | `14_cornerlogo_logonote` | `\ndlogonote`, both `[center]` (default) and `[left]` |
+| `15_cornerlogo_size_override` | `\renewcommand{\ndcornerlogoheight}` / `\ndcornerlogomargin` actually taking effect — asserted numerically via `\ifdim`, not just "compiled" (see below) |
 
 The final `main_demo` line builds the actual bundled demo (`main.tex` +
 `document.tex`, including a real `biber` run) as an end-to-end smoke test on

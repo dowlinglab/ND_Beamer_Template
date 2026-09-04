@@ -28,12 +28,19 @@ check_result() {
   # check_result <pdf-path> <log-path>. A real LaTeX error always
   # starts a log line with "!" -- more reliable than grepping for the
   # word "error", which also matches plenty of benign package
-  # messages.
+  # messages. A case can also assert a numeric/logical outcome itself
+  # (e.g. that an overridden length actually took effect, not just
+  # that nothing crashed) via \typeout{ND-TEST-FAIL: ...} -- some bugs
+  # compile perfectly cleanly and are silently wrong otherwise; see
+  # test/cases/15_cornerlogo_size_override.tex.
   local pdf="$1" log="$2"
   if [ ! -s "$pdf" ]; then
     return 1
   fi
   if grep -q '^!' "$log" 2>/dev/null; then
+    return 1
+  fi
+  if grep -q 'ND-TEST-FAIL' "$log" 2>/dev/null; then
     return 1
   fi
   return 0

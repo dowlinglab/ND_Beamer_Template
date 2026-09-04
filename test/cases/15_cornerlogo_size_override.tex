@@ -1,0 +1,27 @@
+\documentclass{beamer}
+\usetheme[cornerlogo=blue]{NotreDame}
+\renewcommand{\ndcornerlogoheight}{2.5cm}
+\renewcommand{\ndcornerlogomargin}{3mm}
+\title{Corner Logo Size Override}
+\author{A. Researcher}
+\begin{document}
+{
+\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{background}{\ndtitlepagelogodraw}
+\begin{frame}[plain]\titlepage\end{frame}
+}
+\begin{frame}[fragile]{Content}
+Body text.
+\ndlogonote{A note, still correctly positioned against the resized logo.}
+% A plain compile check can't catch this bug's own failure mode: the
+% original defect compiled cleanly and silently used the theme's
+% default size (0.975cm tall, ~3.68cm wide) instead of the override
+% above (2.5cm tall, ~9.4cm wide) -- see \AtBeginDocument in
+% beamerthemeNotreDame.sty. Assert the real, numeric outcome instead.
+\ifdim\ndcornerlogowidth<8cm
+  \typeout{ND-TEST-FAIL: cornerlogo override did not take effect (width=\the\ndcornerlogowidth, expected > 8cm)}
+\else
+  \typeout{ND-TEST-OK: cornerlogo width=\the\ndcornerlogowidth}
+\fi
+\end{frame}
+\end{document}
