@@ -1,0 +1,27 @@
+\documentclass{beamer}
+\usetheme[cornerlogo=blue]{NotreDame}
+\renewcommand{\ndlogonoteanchor}{0.518}
+\title{Anchor Override}
+\author{A. Researcher}
+\begin{document}
+{
+\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{background}{\ndtitlepagelogodraw}
+\begin{frame}[plain]\titlepage\end{frame}
+}
+\begin{frame}[fragile]{Content}
+% \ndlogonoteanchor is used inside \ndlogonote's own (deferred) macro
+% body, not measured eagerly like \ndcornerlogoheight/\ndcornerlogomargin
+% used to be (see case 15) -- but assert the actual value it resolves to
+% rather than just trusting that pattern held here too.
+\makeatletter
+\edef\nd@anchorcheck{\ndlogonoteanchor}
+\ifdefstring{\nd@anchorcheck}{0.518}{%
+  \typeout{ND-TEST-OK: ndlogonoteanchor=\nd@anchorcheck}%
+}{%
+  \typeout{ND-TEST-FAIL: ndlogonoteanchor=\nd@anchorcheck, expected 0.518 (override did not take effect)}%
+}
+\makeatother
+\ndlogonote{A short takeaway line.}
+\end{frame}
+\end{document}

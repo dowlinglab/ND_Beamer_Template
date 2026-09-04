@@ -80,6 +80,7 @@ The cases in `test/cases/` are numbered by theme, not by strict priority:
 | `14_cornerlogo_logonote` | `\ndlogonote`, both `[center]` (default) and `[left]` |
 | `15_cornerlogo_size_override` | `\renewcommand{\ndcornerlogoheight}` / `\ndcornerlogomargin` actually taking effect — asserted numerically via `\ifdim`, not just "compiled" (see below) |
 | `16_leftrule_frametitle_contrast` | `titlelayout=leftrule` doesn't change what `titlecolor` (the per-slide frametitle bar's text color) defaults to — asserted via `\ifdefstring` against the internal `\nd@titlecolor`, not just "compiled" |
+| `17_ndlogonote_anchor_override` | `\renewcommand{\ndlogonoteanchor}` actually taking effect — asserted via `\ifdefstring` against the resolved value |
 
 The final `main_demo` line builds the actual bundled demo (`main.tex` +
 `document.tex`, including a real `biber` run) as an end-to-end smoke test on
