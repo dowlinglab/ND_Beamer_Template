@@ -14,23 +14,24 @@ A minimal Beamer presentation using this template looks something like the follo
 \end{document}
 
 
-The theme currently has 9 options:
+The theme currently has 10 options:
 	% nav - Enables a bottom right navigation bar
 	% nologo - Removes the small logo from every slide's title bar
 	% sections - Shows the current section name in a colored bar under the slide title
 	% noslidenumbers - Removes counting of slides in bottom right
 	% fullFooter - Enables a more descriptive footer (can't use noslidenumbers simultaneously)
 	% cornerlogo - Draws a small academic mark in the bottom-left corner of every content frame
+	% dark - Switches to a dark (NDBlue, not black) background/color scheme
 	% mark=primary|secondary - Which academic-mark lockup to use for the title page and corner logo
 	%   primary   (default) - wide lockup, shield beside "University of Notre Dame"
 	%   secondary           - compact vertical lockup, shield above "Notre Dame"
-	% logo=fullcolor|black|blue|gold|gold-metallic|white - Which color variant of the mark/monogram to use (default: blue)
-	% textcolor=blue|black - Body text color (default: blue, or black automatically if logo=black and textcolor isn't given)
+	% logo=fullcolor|black|blue|gold|gold-metallic|white - Which color variant of the mark/monogram to use (default: blue on the light background, gold on [dark])
+	% textcolor=blue|black - Body text color on the light background only (default: blue, or black automatically if logo=black and textcolor isn't given); on [dark], text is always white
 
 Options are specified as:
   \usetheme[nav,mark=secondary,logo=gold]{NotreDame}
 
-There is no dark/black-background color scheme -- this theme is always the white background. (An earlier [white] option, which switched between a black-background and white-background color theme, was removed in the Dowling Lab's September 2026 fork along with the dark theme itself.)
+The default background is white/light. [dark] switches to a dark canvas -- but NDBlue, not black; there is no black-background option. (An earlier [white] option, which switched between a black-background and white-background color theme, was removed and then this NDBlue-based [dark] added in its place, in the Dowling Lab's September 2026 fork.)
 
 Two extra commands for a corner logo and a companion note box, in the white space beside it -- for a takeaway line, a reference list, anything short:
 
@@ -74,8 +75,9 @@ Public Domain
 Forked and modernized by the Dowling Lab, September 2026: real official
 Notre Dame marks (no college sub-branding, no outdated bundled logos),
 a configurable mark/logo-color/text-color option system, a working
-[sections] option, the dark color theme removed, and the corner-logo/
-note-box commands. See beamerthemeNotreDame.sty's own header comment
+[sections] option, the dark color theme rebuilt on an NDBlue canvas
+instead of black, and the corner-logo/note-box commands. See
+beamerthemeNotreDame.sty's own header comment
 for the full list of changes.
 
 

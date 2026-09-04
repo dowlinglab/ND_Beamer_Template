@@ -14,13 +14,19 @@
 %    previously added a colored bar with no content).
 %  - Removed `compactlogo` -- it was a documented no-op in the upstream
 %    template (both its code branches were identical).
-%  - Removed the dark (black-background) color theme and the `white`
-%    option that switched to it -- Alex's call: "I do not like the black
-%    background. We can drop it." This theme is always the light/white
-%    background now; beamercolorthemeNotreDame.sty (the dark one) is no
-%    longer used. `logo=black`/`textcolor=black` remain available and
-%    valid -- that's a black mark and black text ON the white
-%    background, a different thing from the dark canvas that's gone.
+%  - Removed the upstream dark (black-background) color theme and its
+%    `white` option -- Alex: "I do not like the black background. We
+%    can drop it." Light (no option needed) is the default background.
+%  - Then brought a dark option back, as its own new color theme
+%    (beamercolorthemeNotreDameDark.sty) with an NDBlue canvas instead
+%    of black -- Alex: "I want to go back to the dark background. I am
+%    okay with a blue background. I do not want a black background."
+%    Selected with the new `dark` option; every color that used to be
+%    "the accent that reads against black" and happened to be NDBlue
+%    itself is gold instead in this theme, since NDBlue is now the
+%    canvas. `logo=black`/`textcolor=black` remain available on the
+%    light background -- a black mark and black text on white, a
+%    different thing from either dark canvas.
 %  - Corrected NDGold to the official Dome Gold (#C99700 / PMS 117); the
 %    upstream value (#AE8F40) was never the University's actual color.
 %  - Added `cornerlogo`, \ndcornerlogo, and \ndlogonote: a small mark in
@@ -74,6 +80,16 @@
 \beamer@fullFooterfalse
 \define@key{ND}{fullFooter}[true]{\csname beamer@fullFooter#1\endcsname}
 
+% The option [dark] switches to a dark canvas -- NDBlue, not black.
+% Reinstated 2026-09 after being dropped along with the original
+% black-canvas theme: "I want to go back to the dark background. I am
+% okay with a blue background. I do not want a black background."
+% Light (the default, no option needed) is still the plain white
+% background.
+\newif\ifbeamer@dark
+\beamer@darkfalse
+\define@key{ND}{dark}[true]{\csname beamer@dark#1\endcsname}
+
 % The option [cornerlogo] draws a small academic mark in the bottom-left
 % corner of every content frame (independent of [nologo], which only
 % controls the small top-right in-title-bar logo). Promoted from a
@@ -92,26 +108,34 @@
 % --- Logo color: which color variant of the mark/monogram to use -----
 % fullcolor, black, blue, gold, gold-metallic, white (reverse). Left
 % undefined here so we can tell, after \ProcessOptionsX, whether the
-% user chose one explicitly or whether we should default it (blue).
+% user chose one explicitly or whether we should pick a default from
+% [dark] (blue on the light background, gold on the dark one -- a blue
+% mark on the now-NDBlue dark canvas would have the same
+% invisible-on-its-own-background problem found and fixed for the
+% frametitle bar's small logo).
 \let\nd@logo\undefined
 \define@key{ND}{logo}{\def\nd@logo{#1}}
 
-% --- Text color: body text color -------------------------------------
-% Left undefined so we can default it from the resolved logo color
-% (black logo -> black text) unless the user picked one explicitly.
+% --- Text color: body text color, [white] background only ------------
+% (On [dark], text must stay white -- set by the color theme itself --
+% regardless of [textcolor], or it would be invisible against the navy
+% canvas.) Left undefined so we can default it from the resolved logo
+% color (black logo -> black text) unless the user picked one
+% explicitly.
 \let\nd@textcolor\undefined
 \define@key{ND}{textcolor}{\def\nd@textcolor{#1}}
 
 \ProcessOptionsX<ND>
 
-% Resolve the logo-color default: blue, unless the user picked one
-% explicitly.
+% Resolve the logo-color default: blue on light, gold on dark, unless
+% the user picked one explicitly.
 \ifx\nd@logo\undefined
-  \def\nd@logo{blue}
+  \ifbeamer@dark \def\nd@logo{gold} \else \def\nd@logo{blue} \fi
 \fi
 
 % Resolve the text-color default: black only follows from an explicit
-% black LOGO choice; every other logo color defaults text to blue.
+% black LOGO choice; every other logo color defaults text to blue. Only
+% consulted on the light background -- see the [dark] guard below.
 \ifx\nd@textcolor\undefined
   \ifdefstring{\nd@logo}{black}{\def\nd@textcolor{black}}{\def\nd@textcolor{blue}}
 \fi
@@ -221,33 +245,48 @@
   }
 \fi
 
-\usecolortheme{NotreDameWhite}
+\ifbeamer@dark
+  \usecolortheme{NotreDameDark}
+\else
+  \usecolortheme{NotreDameWhite}
+\fi
 
-% Body-text color, per [textcolor] (default blue, or black if [logo] is
-% black and [textcolor] wasn't given explicitly -- resolved above).
-\ifdefstring{\nd@textcolor}{black}{%
-  \setbeamercolor*{normal text}{fg=black}
-}{%
-  \setbeamercolor*{normal text}{fg=NDBlue}
-}
+% Body-text color. Only meaningful on the light background -- on [dark],
+% text must stay white (set by NotreDameDark itself) regardless of
+% [textcolor], or it would be invisible against the navy canvas.
+\ifbeamer@dark\else
+  \ifdefstring{\nd@textcolor}{black}{%
+    \setbeamercolor*{normal text}{fg=black}
+  }{%
+    \setbeamercolor*{normal text}{fg=NDBlue}
+  }
+\fi
 
 % --- Logo and title-page graphic --------------------------------------
 % No college sub-branding: both marks are the plain university marks.
 % The title page uses the full academic mark, in the [mark] shape and
-% [logo] color chosen -- it sits on the plain white body background, so
-% every [logo] color choice (including black) reads correctly there.
+% [logo] color chosen -- it sits on the plain body background (white on
+% light, NDBlue on [dark]), so the resolved default (blue on light,
+% gold on dark) reads correctly there, as does any explicit choice.
 \titlegraphic{\includegraphics[height=1.5cm]{logos/academic-mark/\nd@mark/\nd@logo}}
 
 % The small top-right \logo (suppressed by [nologo]) is a different
 % story: it sits INSIDE the frametitle bar, whose background is the
-% "palette secondary" color -- NDBlue. FOUND BY TESTING 2026-09: using
-% \nd@logo's resolved color there put a blue monogram on a blue bar --
-% effectively invisible when [logo] is blue (the default). This logo is
-% therefore always the white/reverse monogram, which contrasts with
-% that navy bar regardless of what [logo] resolves to elsewhere -- not
-% a style choice, the alternative is an invisible logo whenever [logo]
-% happens to be blue.
-\logo{\includegraphics[height=0.6cm]{logos/monogram/white}}
+% "palette secondary" color -- NDBlue on light, NDGold on [dark].
+% FOUND BY TESTING 2026-09: using \nd@logo's resolved color there put a
+% blue monogram on a blue bar (light, [logo] defaults to blue) and,
+% before [dark] was briefly dropped and brought back, a gold monogram
+% on a gold bar -- both effectively invisible. This logo's color is
+% therefore chosen to contrast with ITS OWN bar instead of following
+% [logo]: white monogram on the navy bar (light), blue monogram on the
+% gold bar ([dark]). This is independent of [logo] by necessity, not a
+% style choice -- the alternative is an invisible logo.
+\ifbeamer@dark
+  \def\nd@barlogocolor{blue}
+\else
+  \def\nd@barlogocolor{white}
+\fi
+\logo{\includegraphics[height=0.6cm]{logos/monogram/\nd@barlogocolor}}
 
 % --- Corner logo and its companion note box ---------------------------
 % Promoted from a pattern built ad hoc, per-deck, before this fork
@@ -261,12 +300,14 @@
 % with \renewcommand{\ndcornerlogomargin}{...} before \begin{document}
 % if a specific deck wants something else.
 \newcommand{\ndcornerlogomargin}{0.15mm}
-% \ndcornerlogoheight matches the size already tuned, by eye, against
-% the primary mark in the Dowling Lab's own seminar deck (0.2475 of a
+% \ndcornerlogoheight started at the size tuned, by eye, against the
+% primary mark in the Dowling Lab's own seminar deck (0.2475 of a
 % 12.8cm-wide slide, at that mark's 2.42:1 aspect ratio, works out to
 % ~1.3cm tall) -- height-based rather than width-based so it stays a
 % consistent vertical footprint regardless of [mark]'s aspect ratio.
-\newcommand{\ndcornerlogoheight}{1.3cm}
+% Alex's call 2026-09, seeing it rendered against these marks' real
+% (tighter-cropped) proportions: too big at 1.3cm -- shrunk to 75%.
+\newcommand{\ndcornerlogoheight}{0.975cm}
 
 \newsavebox{\nd@cornerlogobox}
 \savebox{\nd@cornerlogobox}{\includegraphics[height=\ndcornerlogoheight]{logos/academic-mark/\nd@mark/\nd@logo}}
