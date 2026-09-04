@@ -1,7 +1,7 @@
 This is a Beamer template set up to look pretty decent and have a
 University of Notre Dame theme.  For math typesetting, it is definitely better than using existing Powerpoint templates.
 
-The easiest way to install this theme is to just dump the *.sty files into the same directory as your tex source.
+The easiest way to install this theme is to just dump the *.sty files into the same directory as your tex source, along with the logos/ directory.
 
 A minimal Beamer presentation using this template looks something like the following:
 
@@ -14,20 +14,48 @@ A minimal Beamer presentation using this template looks something like the follo
 \end{document}
 
 
-The theme currently has 7 options:
+The theme currently has 9 options:
 	% nav - Enables a bottom right navigation bar
-	% white - Sets slides for white color scheme
-	% nologo - Removes logo from all slides title bar
-	% compactlogo - Enables a compact banner for the title slide (N/A currently)
-	% sections - Enables top of slide section progress tracking and navigation
+	% nologo - Removes the small logo from every slide's title bar
+	% sections - Shows the current section name in a colored bar under the slide title
 	% noslidenumbers - Removes counting of slides in bottom right
 	% fullFooter - Enables a more descriptive footer (can't use noslidenumbers simultaneously)
+	% cornerlogo - Draws a small academic mark in the bottom-left corner of every content frame
+	% mark=primary|secondary - Which academic-mark lockup to use for the title page and corner logo
+	%   primary   (default) - wide lockup, shield beside "University of Notre Dame"
+	%   secondary           - compact vertical lockup, shield above "Notre Dame"
+	% logo=fullcolor|black|blue|gold|gold-metallic|white - Which color variant of the mark/monogram to use (default: blue)
+	% textcolor=blue|black - Body text color (default: blue, or black automatically if logo=black and textcolor isn't given)
 
 Options are specified as:
-  \usetheme[nav,white]{NotreDame}
+  \usetheme[nav,mark=secondary,logo=gold]{NotreDame}
+
+There is no dark/black-background color scheme -- this theme is always the white background. (An earlier [white] option, which switched between a black-background and white-background color theme, was removed in the Dowling Lab's September 2026 fork along with the dark theme itself.)
+
+Two extra commands for a corner logo and a companion note box, in the white space beside it -- for a takeaway line, a reference list, anything short:
+
+  \ndcornerlogo
+    Draws the corner logo directly (called automatically as the frame
+    background when [cornerlogo] is set; call it yourself, e.g. via
+    \setbeamertemplate{background}{\ndcornerlogo}, for more control).
+
+  \ndlogonote[align]{text}
+    A note box horizontally centered between the corner logo's right
+    edge and the slide's right edge, vertically centered on the logo's
+    own vertical middle. [align] defaults to center (a short takeaway
+    line); pass [left] for a left-aligned reference list. Measures the
+    logo's actual rendered size, so it stays aligned with whichever
+    [mark] is chosen.
+
+  \ndcornerlogomargin, \ndcornerlogoheight
+    Override with \renewcommand{...}{...} before \begin{document} to
+    change the corner logo's distance from the page edge (default
+    0.15mm) or its height (default 1.3cm).
+
+Both use TikZ's "remember picture, overlay" to reference the page edges, which is standard TikZ behavior needing a second compilation pass to position correctly (the first pass doesn't yet know the page's absolute layout) -- a plain single `pdflatex` run will show them misplaced; `latexmk` (or any build that reruns until stable) handles this automatically.
 
 Other suggested packages:
-* tikz (pgf, for diagrams)
+* tikz (pgf, for diagrams) -- already loaded by this theme, for the corner logo/note box
 * listings (for source code listings)
 * fontspec (if using xetex)
 
@@ -42,6 +70,13 @@ Adapted from author below:
 Author: Tristan Ravitch (travitch@cs.wisc.edu)
 Initial Release: June 2009
 Public Domain
+
+Forked and modernized by the Dowling Lab, September 2026: real official
+Notre Dame marks (no college sub-branding, no outdated bundled logos),
+a configurable mark/logo-color/text-color option system, a working
+[sections] option, the dark color theme removed, and the corner-logo/
+note-box commands. See beamerthemeNotreDame.sty's own header comment
+for the full list of changes.
 
 
 Extra
@@ -71,4 +106,3 @@ following way:
 
 Note the moredelim option; with this option and the preceeding
 declarations, prefixing a line in file.c will highlight the line.
-
