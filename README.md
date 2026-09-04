@@ -144,6 +144,10 @@ pdflatex main.tex
 pdflatex main.tex   # twice, for \ndlogonote's overlay coordinates -- see above
 ```
 
+## Testing
+
+`./test/run_regression.sh` compiles a matrix of option combinations and reports which fail — see [TESTING.md](TESTING.md) for what it checks (and, importantly, what it doesn't).
+
 ## Other suggested packages
 
 * `tikz` — already loaded by this theme (used for the corner logo/note box)

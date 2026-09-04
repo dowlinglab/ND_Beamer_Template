@@ -1,0 +1,19 @@
+\documentclass{beamer}
+\usetheme[cornerlogo=gold]{NotreDame}
+\title{Corner Logo Note}
+\author{A. Researcher}
+\begin{document}
+{
+\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{background}{\ndtitlepagelogodraw}
+\begin{frame}[plain]\titlepage\end{frame}
+}
+\begin{frame}[fragile]{Content}
+Body text.
+\ndlogonote{A short takeaway line, centered beside the logo.}
+\end{frame}
+\begin{frame}[fragile]{Content, left-aligned note}
+Body text.
+\ndlogonote[left]{A left-aligned\\reference list.}
+\end{frame}
+\end{document}
