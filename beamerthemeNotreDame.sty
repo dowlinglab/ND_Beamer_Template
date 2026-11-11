@@ -357,17 +357,21 @@
 % since this template replaces that default outright.
 \ifdefstring{\nd@titlelayout}{leftrule}{%
   \newcommand{\ndleftrulelogoheight}{1.4cm}
+  \newlength{\ndleftrulebeforeauthor}
+  \setlength{\ndleftrulebeforeauthor}{1.1cm}
+  \newlength{\ndleftrulebeforerule}
+  \setlength{\ndleftrulebeforerule}{1.1cm}
   \setbeamertemplate{title page}{%
     \raggedright
     \vskip 0.3cm
     {\Huge\bfseries\color{nd@titlepagetitlecolorreal}\inserttitle\par}%
     \vskip 0.1cm
     {\LARGE\bfseries\color{NDGold}\insertsubtitle\par}%
-    \vskip 1.1cm
+    \vskip\ndleftrulebeforeauthor
     {\large\bfseries\color{nd@textcolorreal}\insertauthor\par}%
     \vskip 0.2cm
     {\normalsize\color{nd@textcolorreal}\insertinstitute\par}%
-    \vskip 1.1cm
+    \vskip\ndleftrulebeforerule
     \color{NDGold}\rule{\linewidth}{1.2pt}\par
     \vskip 0.6cm
     \noindent\begin{minipage}[c]{0.42\linewidth}
@@ -448,14 +452,16 @@
   \newcommand{\ndlogonoteanchor}{0.5}
   \newlength{\nd@notegap}
   \setlength{\nd@notegap}{4mm}
-  \newlength{\nd@noteRmargin}
-  \setlength{\nd@noteRmargin}{3mm}
+  \newlength{\ndlogonoterightmargin}
+  \setlength{\ndlogonoterightmargin}{3mm}
+  % Preserve decks that already set the old internal length.
+  \let\nd@noteRmargin\ndlogonoterightmargin
   \newcommand{\ndlogonote}[2][center]{%
     \begin{tikzpicture}[remember picture, overlay]
       \coordinate (nd@logoR) at ($(current page.south west) + (\ndcornerlogomargin+\ndcornerlogowidth+\nd@notegap, \ndcornerlogomargin+\ndlogonoteanchor*\ndcornerlogoheight)$);
-      \coordinate (nd@pageR) at ($(current page.south east) + (-\nd@noteRmargin, \ndcornerlogomargin+\ndlogonoteanchor*\ndcornerlogoheight)$);
+      \coordinate (nd@pageR) at ($(current page.south east) + (-\ndlogonoterightmargin, \ndcornerlogomargin+\ndlogonoteanchor*\ndcornerlogoheight)$);
       \node[anchor=center, align=#1,
-            text width=\dimexpr\paperwidth-\ndcornerlogomargin-\ndcornerlogowidth-\nd@notegap-\nd@noteRmargin\relax]
+            text width=\dimexpr\paperwidth-\ndcornerlogomargin-\ndcornerlogowidth-\nd@notegap-\ndlogonoterightmargin\relax]
         at ($(nd@logoR)!0.5!(nd@pageR)$) {#2};
     \end{tikzpicture}%
   }

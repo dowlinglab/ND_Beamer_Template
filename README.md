@@ -91,6 +91,15 @@ There is **no black-canvas option**. `background` is white or blue (NDBlue) only
 
 `leftrule`'s title-page title is always background-aware (blue on white, white on blue) and is **not** controlled by `titlecolor` — that option is specifically the per-slide frametitle bar's text color, which exists on every content frame regardless of which title layout you use, and needs its own bar-aware default independent of the title page.
 
+The lengths `\ndleftrulebeforeauthor` and `\ndleftrulebeforerule` control the vertical space above the author block and above the gold rule. Both default to `1.1cm`. For example, the research workshop lowered the author block by `6.1mm` while keeping the combined spacing at `2.2cm`:
+
+```latex
+\setlength{\ndleftrulebeforeauthor}{1.71cm}
+\setlength{\ndleftrulebeforerule}{0.49cm}
+```
+
+Set the lengths after `\usetheme`. They are available with `titlelayout=leftrule`.
+
 ### `\ndvenue{text}` — a venue/location field
 
 ```latex
@@ -130,6 +139,7 @@ Only defined when `cornerlogo` is not `none` (they position themselves relative 
 - `\ndcornerlogo` draws the corner logo. Set automatically as the frame background whenever `cornerlogo != none`; call it yourself (e.g. `\setbeamertemplate{background}{\ndcornerlogo}`) if a specific deck wants more control.
 - `\ndlogonote[align]{text}` places a note in the white space beside the corner logo: horizontally centered between the logo's right edge and the slide's right edge, vertically centered on `\ndlogonoteanchor` (a fraction of `\ndcornerlogoheight` from the bottom; default `0.5`, the logo's own geometric vertical middle). `[align]` defaults to `center` (a short takeaway line); pass `[left]` for a left-aligned reference list.
 - `\ndcornerlogomargin` (default `0.15mm`), `\ndcornerlogoheight` (default `0.975cm`), and `\ndlogonoteanchor` (default `0.5`) control the logo's distance from the page corner, its size, and the note's vertical anchor — override with `\renewcommand{...}{...}` before `\begin{document}`. `\ndlogonoteanchor` exists because the geometric center of the full logo (shield + wordmark) isn't necessarily where a note visually reads as "centered against the wordmark" — for the primary mark, measured directly against the asset, "NOTRE DAME"'s own line sits at `0.518`, not `0.5` (the shield's wave-tail extends a bit further down than the text). The default stays mark-agnostic; a deck using the primary mark can override it precisely.
+- `\ndlogonoterightmargin` is the space reserved at the right edge (default `3mm`). Set it with `\setlength` to leave room for a custom page number or label. The note box narrows and shifts left as the margin grows.
 - **Practical limit: about two lines.** `\ndlogonote` centers its note on its anchor, so the note's height grows equally *above and below* that point — and at the default `\ndcornerlogomargin`/`\ndcornerlogoheight`, there's only a few millimeters of clearance below the anchor before the page edge. A third line reliably clips off the bottom of the slide (confirmed by rendering, not just estimated). Check any multi-line note against its actual render.
 - **To fit more on one specific slide**, raise that slide's anchor locally rather than changing the default for the whole deck — `\ndcornerlogomargin` is read fresh every time `\ndcornerlogo`/`\ndlogonote` draw, so a `\renewcommand` placed inside a `frame` environment (Beamer groups each frame, so this reverts automatically at `\end{frame}` — confirmed by rendering three consecutive frames, not just assumed) affects only that frame, moving the logo and the note together, still aligned:
   ```latex
@@ -143,6 +153,33 @@ Only defined when `cornerlogo` is not `none` (they position themselves relative 
 **Known limitation, not automatically resolved:** `\ndcornerlogo`/`\ndlogonote` assume nothing else occupies the bottom strip of the slide. Both `nav` (the navigation-symbol row) and `fullFooter` (the 3-part footer bar) visibly collide with them — none of these three features know about each other. Don't combine `cornerlogo` with `nav` or `fullFooter` without checking the render.
 
 **Compilation note:** both use TikZ's `remember picture, overlay` to reference the page edges, which needs a second compilation pass to position correctly — a single `pdflatex` run will show them misplaced at (0,0); `latexmk` (or any build that reruns until stable) handles this automatically.
+
+### Compact research slides
+
+The research workshop and follow-up presentations use a smaller full-color primary corner mark and align notes to its wordmark. Set these options and dimensions after choosing a 16:9 Beamer document:
+
+```latex
+\usetheme[cornerlogo=fullcolor,titlepagelogo=fullcolor,
+  textcolor=blue,titlelayout=leftrule,monogram=none]{NotreDame}
+\renewcommand{\ndcornerlogoheight}{0.839cm}
+\renewcommand{\ndcornerlogomargin}{0.5mm}
+\renewcommand{\ndlogonoteanchor}{0.518}
+```
+
+For a note or citation with a compact slide counter, use the following preamble settings. Set the right margin to accommodate the widest number or label in your deck.
+
+```latex
+\setlength{\ndlogonoterightmargin}{15mm}
+\setbeamertemplate{footline}{%
+  \leavevmode
+  \hbox to \paperwidth{\hfil
+    \usebeamercolor[fg]{page in head/foot}%
+    \scriptsize\insertframenumber/\inserttotalframenumber\hskip 3mm}%
+  \vskip 2mm
+}
+```
+
+Place `\ndlogonote{\scriptsize Source or link}` in each frame that needs a note. Use the title-frame wrapper above for the cover.
 
 ## The demo (`main.tex` / `document.tex`)
 

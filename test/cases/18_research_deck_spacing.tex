@@ -1,0 +1,44 @@
+\documentclass[aspectratio=169,11pt]{beamer}
+\usetheme[cornerlogo=fullcolor,titlepagelogo=fullcolor,textcolor=blue,
+          titlelayout=leftrule,monogram=none]{NotreDame}
+
+\renewcommand{\ndcornerlogoheight}{0.839cm}
+\renewcommand{\ndcornerlogomargin}{0.5mm}
+\renewcommand{\ndlogonoteanchor}{0.518}
+\setlength{\ndleftrulebeforeauthor}{1.71cm}
+\setlength{\ndleftrulebeforerule}{0.49cm}
+\setlength{\ndlogonoterightmargin}{15mm}
+\setbeamertemplate{footline}{%
+  \leavevmode
+  \hbox to \paperwidth{\hfil
+    \usebeamercolor[fg]{page in head/foot}%
+    \scriptsize\insertframenumber/\inserttotalframenumber\hskip 3mm}%
+  \vskip 2mm
+}
+
+\title{Research workflow}
+\subtitle{A worked example}
+\author{Example Author}
+\institute{University of Notre Dame}
+\date{September 2026}
+
+\begin{document}
+{
+\setbeamertemplate{background}{\ndtitlepagelogodraw}
+\begin{frame}[plain]
+  \titlepage
+\end{frame}
+}
+
+\begin{frame}{Evidence and interpretation}
+  \ndlogonote{\scriptsize\href{https://example.org}{Source with a link and an explanation of the evidence shown on this frame.}}
+  \begin{itemize}
+    \item Preserve the inputs and record the initial result.
+    \item Check the interpretation against the source.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{A slide with no source note}
+  The counter and corner mark still appear.
+\end{frame}
+\end{document}
